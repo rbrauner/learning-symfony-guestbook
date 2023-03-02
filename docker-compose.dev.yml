@@ -15,6 +15,7 @@ services:
             - mailer
         volumes:
             - .:/var/www/html/:ro
+            - ./data:/var/www/html/data/:rw
             - ./var:/var/www/html/var/:rw
             - ./docker/dev/php/php.ini:/usr/local/etc/php/php.ini:ro
             - /etc/timezone:/etc/timezone:ro
