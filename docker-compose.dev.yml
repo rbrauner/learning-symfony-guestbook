@@ -11,15 +11,15 @@ services:
         ports:
             - ${PHP_PORT:-9000}:9000
         depends_on:
-            - app-data
             - database
             - mailer
         volumes:
+            - .:/var/www/html/:ro
+            - ./data:/var/www/html/data/:rw
+            - ./var:/var/www/html/var/:rw
             - ./docker/dev/php/php.ini:/usr/local/etc/php/php.ini:ro
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
-        volumes_from:
-            - app-data
         networks:
             - backend
 
@@ -31,20 +31,19 @@ services:
                 - PHP_UPSTREAM_CONTAINER=${PHP_UPSTREAM_CONTAINER:-php}
                 - PHP_UPSTREAM_PORT=${PHP_PORT:-9000}
         platform: linux/x86_64
+        working_dir: /var/www/html
         ports:
             - ${NGINX_PORT_HTTP:-80}:80
             - ${NGINX_PORT_HTTPS:-443}:443
         depends_on:
-            - app-data
             - php
         volumes:
+            - .:/var/www/html/:ro
             - ./docker/dev/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ./docker/dev/nginx/sites-available/:/etc/nginx/sites-available:ro
             - ./docker/dev/nginx/ssl/:/etc/nginx/ssl:rw
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
-        volumes_from:
-            - app-data
         networks:
             - backend
 
@@ -54,16 +53,15 @@ services:
             args:
                 - POSTGRES_VERSION=${POSTGRES_VERSION:-15-alpine}
         platform: linux/x86_64
+        working_dir: /var/www/html
         environment:
             - POSTGRES_DB=${POSTGRES_DB:-app}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-!ChangeMe!}
             - POSTGRES_USER=${POSTGRES_USER:-app}
         ports:
             - ${POSTGRES_PORT:-5432}:5432
-        depends_on:
-            - database-data
-        volumes_from:
-            - database-data
+        volumes:
+            - database_data:/var/lib/postgresql/data:rw
         networks:
             - backend
 
@@ -73,35 +71,10 @@ services:
             args:
                 - MAILER_VERSION=${MAILER_VERSION:-latest}
         platform: linux/x86_64
+        working_dir: /var/www/html
         ports:
             - 1025
             - 1080
-        networks:
-            - backend
-
-    app-data:
-        build:
-            context: ./docker/dev/app-data
-            args:
-                - PHP_VERSION=${PHP_VERSION:-fpm-alpine}
-        platform: linux/x86_64
-        working_dir: /var/www/html
-        volumes:
-            - .:/var/www/html/:ro
-            - ./data:/var/www/html/data/:rw
-            - ./var:/var/www/html/var/:rw
-        networks:
-            - backend
-
-    database-data:
-        build:
-            context: ./docker/dev/database-data
-            args:
-                - PHP_VERSION=${PHP_VERSION:-fpm-alpine}
-        platform: linux/x86_64
-        working_dir: /var/www/html
-        volumes:
-            - database_data:/var/lib/postgresql/data:rw
         networks:
             - backend
 
