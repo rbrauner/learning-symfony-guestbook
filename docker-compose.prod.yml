@@ -6,6 +6,7 @@ services:
             context: ./docker/prod/php
             args:
                 - PHP_VERSION=${PHP_VERSION:-fpm-alpine}
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-php
         platform: linux/x86_64
         working_dir: /var/www/html
         ports:
@@ -27,6 +28,7 @@ services:
                 - NGINX_VERSION=${NGINX_VERSION:-alpine}
                 - PHP_UPSTREAM_CONTAINER=${PHP_UPSTREAM_CONTAINER:-php}
                 - PHP_UPSTREAM_PORT=${PHP_PORT:-9000}
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-nginx
         platform: linux/x86_64
         working_dir: /var/www/html
         ports:
@@ -44,6 +46,7 @@ services:
             context: ./docker/prod/database
             args:
                 - POSTGRES_VERSION=${POSTGRES_VERSION:-15-alpine}
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-database
         platform: linux/x86_64
         working_dir: /var/www/html
         environment:
@@ -62,6 +65,7 @@ services:
             context: ./docker/prod/mailer
             args:
                 - MAILER_VERSION=${MAILER_VERSION:-latest}
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-mailer
         platform: linux/x86_64
         working_dir: /var/www/html
         ports:
