@@ -2,36 +2,35 @@ version: "3"
 
 services:
     php:
+        build:
+            context: ./docker/build/php
+            args:
+                - PHP_VERSION=${PHP_VERSION:-fpm-alpine}
         image: ghcr.io/rbrauner/learning-symfony-guestbook-php:${TAG:-latest}
         platform: linux/x86_64
         working_dir: /var/www/html
-        ports:
-            - ${PHP_PORT:-9000}:9000
         depends_on:
             - database
             - mailer
-        volumes:
-            - app_data:/var/www/html/:rw
-            - ./data:/var/www/html/data/:rw
-            - ./var:/var/www/html/var/:rw
-        networks:
-            - backend
 
     nginx:
+        build:
+            context: ./docker/build/nginx
+            args:
+                - NGINX_VERSION=${NGINX_VERSION:-alpine}
+                - PHP_UPSTREAM_CONTAINER=${PHP_UPSTREAM_CONTAINER:-php}
+                - PHP_UPSTREAM_PORT=${PHP_PORT:-9000}
         image: ghcr.io/rbrauner/learning-symfony-guestbook-nginx:${TAG:-latest}
         platform: linux/x86_64
         working_dir: /var/www/html
-        ports:
-            - ${NGINX_PORT_HTTP:-80}:80
-            - ${NGINX_PORT_HTTPS:-443}:443
         depends_on:
             - php
-        volumes_from:
-            - php
-        networks:
-            - backend
 
     database:
+        build:
+            context: ./docker/build/database
+            args:
+                - POSTGRES_VERSION=${POSTGRES_VERSION:-15-alpine}
         image: ghcr.io/rbrauner/learning-symfony-guestbook-database:${TAG:-latest}
         platform: linux/x86_64
         working_dir: /var/www/html
@@ -39,25 +38,12 @@ services:
             - POSTGRES_DB=${POSTGRES_DB:-app}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-!ChangeMe!}
             - POSTGRES_USER=${POSTGRES_USER:-app}
-        ports:
-            - ${POSTGRES_PORT:-5432}:5432
-        volumes:
-            - ./var/database-data:/var/lib/postgresql/data:rw
-        networks:
-            - backend
 
     mailer:
+        build:
+            context: ./docker/build/mailer
+            args:
+                - MAILER_VERSION=${MAILER_VERSION:-latest}
         image: ghcr.io/rbrauner/learning-symfony-guestbook-mailer:${TAG:-latest}
         platform: linux/x86_64
         working_dir: /var/www/html
-        ports:
-            - 1025
-            - 1080
-        networks:
-            - backend
-
-volumes:
-    app_data:
-
-networks:
-    backend:
