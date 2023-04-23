@@ -16,6 +16,7 @@ services:
             - ./var:/var/www/html/var/:rw
         networks:
             - backend
+        user: "${UID:-0}:${GID:-0}"
 
     nginx:
         image: ghcr.io/rbrauner/learning-symfony-guestbook-nginx:${TAG:-latest}
@@ -30,6 +31,7 @@ services:
             - php
         networks:
             - backend
+        user: "${UID:-0}:${GID:-0}"
 
     database:
         image: ghcr.io/rbrauner/learning-symfony-guestbook-database:${TAG:-latest}
@@ -45,6 +47,7 @@ services:
             - ./var/database-data:/var/lib/postgresql/data:rw
         networks:
             - backend
+        user: "${UID:-0}:${GID:-0}"
 
     mailer:
         image: ghcr.io/rbrauner/learning-symfony-guestbook-mailer:${TAG:-latest}
@@ -55,6 +58,7 @@ services:
             - 1080
         networks:
             - backend
+        user: "${UID:-0}:${GID:-0}"
 
 volumes:
     app_data:
