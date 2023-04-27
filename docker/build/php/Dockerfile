@@ -31,7 +31,7 @@ RUN install-php-extensions opcache
 
 RUN install-php-extensions apcu
 
-RUN install-php-extensions xdebug
+# RUN install-php-extensions xdebug
 
 # composer
 RUN install-php-extensions @composer
