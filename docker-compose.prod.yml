@@ -42,7 +42,7 @@ services:
         ports:
             - ${DATABASE_PORT}:5432
         volumes:
-            - ./var/database-data:/var/lib/postgresql/data:rw
+            - ./data/database-data:/var/lib/postgresql/data:rw
         networks:
             - backend
 
