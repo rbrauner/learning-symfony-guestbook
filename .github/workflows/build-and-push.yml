@@ -30,6 +30,9 @@ jobs:
             - name: Load .env file
               uses: xom9ikk/dotenv@v2
 
+            - name: Set env
+              run: echo "PHP_IMAGE_VERSION=${PHP_IMAGE_VERSION}" >> $GITHUB_ENV
+
             - name: Docker meta
               id: meta
               uses: docker/metadata-action@v4
@@ -66,4 +69,4 @@ jobs:
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
                   build-args:
-                    PHP_VERSION=${PHP_IMAGE_VERSION}
+                    PHP_VERSION=${{ env.PHP_IMAGE_VERSION }}
