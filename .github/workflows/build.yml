@@ -1,16 +1,23 @@
-name: Publish in GitHub Package Registry
+name: Build and push Docker images to GitHub Container Registry
 
 on:
     push:
-        tags:
-            - 'v*.*.*'
+        tags: [ 'v*.*.*' ]
+
+env:
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ${{ github.repository }}
 
 jobs:
     build:
         name: Build
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
         steps:
-            - name: Checkout
+            - name: Checkout repository
               uses: actions/checkout@v3
             - name: Set env
               run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
@@ -22,6 +29,14 @@ jobs:
               run: DOCKER_IMAGE_TAG=latest docker compose -f ./docker-compose.build.yml build
             - name: Docker compose build tag
               run: DOCKER_IMAGE_TAG=$RELEASE_VERSION docker compose -f ./docker-compose.build.yml build
+
+            - name: Log into registry ${{ env.REGISTRY }}
+              uses: docker/login-action@v2
+              with:
+                registry: ${{ env.REGISTRY }}
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+
             - name: Docker compose push latest
               run: DOCKER_IMAGE_TAG=latest docker compose -f ./docker-compose.build.yml push
             - name: Docker compose push tag
