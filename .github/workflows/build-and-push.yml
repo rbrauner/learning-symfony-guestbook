@@ -15,9 +15,11 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
-            - name: Set docker image env var
+            - name: Load environment variables from .env file
               run: |
-                echo "PHP_IMAGE_VERSION=${PHP_IMAGE_VERSION}" >> $GITHUB_ENV
+                set -o allexport
+                source .env
+                set +o allexport
             - run: |
                 echo ${{ env.PHP_IMAGE_VERSION }}
             # - name: Test
