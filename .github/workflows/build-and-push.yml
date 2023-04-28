@@ -15,15 +15,11 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
-            - name: Load environment variables from .env file
-              uses: falti/dotenv-action@v1.0.4
-            - run: |
-                echo ${{ steps.dotenv.outputs.PHP_IMAGE_VERSION }}
-            # - name: Test
-            #   run: |
-            #     echo $PHP_IMAGE_VERSION
-            #     echo ${{ env.PHP_IMAGE_VERSIONN }}
-            #     echo ${{ secrets.PHP_IMAGE_VERSIONN }}
+            - name: Test
+              run: |
+                echo $PHP_IMAGE_VERSION
+                echo ${{ env.PHP_IMAGE_VERSIONN }}
+                echo ${{ secrets.PHP_IMAGE_VERSIONN }}
     # php-image:
     #     name: Build and push php image
     #     runs-on: ubuntu-latest
