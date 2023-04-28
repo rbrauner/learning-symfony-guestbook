@@ -31,7 +31,8 @@ jobs:
               uses: xom9ikk/dotenv@v2
 
             - name: Set env
-              run: echo "PHP_IMAGE_VERSION=${PHP_IMAGE_VERSION}" >> $GITHUB_ENV
+              run: |
+                echo "PHP_IMAGE_VERSION=${PHP_IMAGE_VERSION}" >> $GITHUB_ENV
 
             - name: Docker meta
               id: meta
@@ -56,7 +57,7 @@ jobs:
               uses: docker/login-action@v2
               with:
                   registry: ${{ env.REGISTRY }}
-                  username: ${{ github.actor }}
+                  username: ${{ github.repository_owner }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Build and push
@@ -70,3 +71,195 @@ jobs:
                   cache-to: type=gha,mode=max
                   build-args:
                     PHP_VERSION=${{ env.PHP_IMAGE_VERSION }}
+
+    nginx-image:
+        name: Build and push nginx image
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            # - name: Set env
+            #   run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+            # - name: Test
+            #   run: |
+            #     echo $RELEASE_VERSION
+            #     echo ${{ env.RELEASE_VERSION }}
+
+            - name: Load .env file
+              uses: xom9ikk/dotenv@v2
+
+            - name: Set env
+              run: |
+                echo "NGINX_IMAGE_VERSION=${NGINX_IMAGE_VERSION}" >> $GITHUB_ENV
+                echo "PHP_PORT=${PHP_PORT}" >> $GITHUB_ENV
+
+            - name: Docker meta
+              id: meta
+              uses: docker/metadata-action@v4
+              with:
+                images: |
+                  rbrauner/learning-symfony-guestbook-nginx
+                  ghcr.io/rbrauner/learning-symfony-guestbook-nginx
+                tags: |
+                  type=schedule
+                  type=ref,event=branch
+                  type=ref,event=pr
+                  type=semver,pattern={{version}}
+                  type=semver,pattern={{major}}.{{minor}}
+                  type=semver,pattern={{major}}
+                  type=sha
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
+            - name: Log into registry
+              uses: docker/login-action@v2
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.repository_owner }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and push
+              uses: docker/build-push-action@v4
+              with:
+                  context: ./docker/prod/nginx
+                  push: true
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
+                  build-args:
+                    NGINX_VERSION=${{ env.NGINX_IMAGE_VERSION }}
+                    PHP_UPSTREAM_CONTAINER=php
+                    PHP_UPSTREAM_PORT=${{ env.PHP_UPSTREAM_PORT }}
+
+    database-image:
+        name: Build and push database image
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            # - name: Set env
+            #   run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+            # - name: Test
+            #   run: |
+            #     echo $RELEASE_VERSION
+            #     echo ${{ env.RELEASE_VERSION }}
+
+            - name: Load .env file
+              uses: xom9ikk/dotenv@v2
+
+            - name: Set env
+              run: |
+                echo "DATABASE_IMAGE_VERSION=${DATABASE_IMAGE_VERSION}" >> $GITHUB_ENV
+
+            - name: Docker meta
+              id: meta
+              uses: docker/metadata-action@v4
+              with:
+                images: |
+                  rbrauner/learning-symfony-guestbook-database
+                  ghcr.io/rbrauner/learning-symfony-guestbook-database
+                tags: |
+                  type=schedule
+                  type=ref,event=branch
+                  type=ref,event=pr
+                  type=semver,pattern={{version}}
+                  type=semver,pattern={{major}}.{{minor}}
+                  type=semver,pattern={{major}}
+                  type=sha
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
+            - name: Log into registry
+              uses: docker/login-action@v2
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.repository_owner }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and push
+              uses: docker/build-push-action@v4
+              with:
+                  context: ./docker/prod/database
+                  push: true
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
+                  build-args:
+                    POSTGRES_VERSION=${{ env.DATABASE_IMAGE_VERSION }}
+
+    mailer-image:
+        name: Build and push mailer image
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            # - name: Set env
+            #   run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+            # - name: Test
+            #   run: |
+            #     echo $RELEASE_VERSION
+            #     echo ${{ env.RELEASE_VERSION }}
+
+            - name: Load .env file
+              uses: xom9ikk/dotenv@v2
+
+            - name: Set env
+              run: |
+                echo "MAILER_IMAGE_VERSION=${MAILER_IMAGE_VERSION}" >> $GITHUB_ENV
+
+            - name: Docker meta
+              id: meta
+              uses: docker/metadata-action@v4
+              with:
+                images: |
+                  rbrauner/learning-symfony-guestbook-mailer
+                  ghcr.io/rbrauner/learning-symfony-guestbook-mailer
+                tags: |
+                  type=schedule
+                  type=ref,event=branch
+                  type=ref,event=pr
+                  type=semver,pattern={{version}}
+                  type=semver,pattern={{major}}.{{minor}}
+                  type=semver,pattern={{major}}
+                  type=sha
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
+            - name: Log into registry
+              uses: docker/login-action@v2
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.repository_owner }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and push
+              uses: docker/build-push-action@v4
+              with:
+                  context: ./docker/prod/mailer
+                  push: true
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
+                  build-args:
+                    MAILER_VERSION=${{ env.MAILER_IMAGE_VERSION }}
