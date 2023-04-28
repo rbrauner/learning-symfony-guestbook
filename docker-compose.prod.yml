@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+    php:
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-php:${PHP_IMAGE_TAG}
+        platform: linux/x86_64
+        working_dir: /var/www/html
+        ports:
+            - ${PHP_PORT}:9000
+        depends_on:
+            - database
+            - mailer
+        volumes:
+            - app_data:/var/www/html/:ro
+            - ./data:/var/www/html/data/:rw
+            - ./var:/var/www/html/var/:rw
+        networks:
+            - backend
+
+    nginx:
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-nginx:${NIGNX_IMAGE_TAG}
+        platform: linux/x86_64
+        working_dir: /var/www/html
+        ports:
+            - ${NGINX_HTTP_PORT}:80
+            - ${NGINX_HTTPS_PORT}:443
+        depends_on:
+            - php
+        volumes_from:
+            - php
+        networks:
+            - backend
+
+    database:
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-database:${DATABASE_IMAGE_TAG}
+        platform: linux/x86_64
+        working_dir: /var/www/html
+        environment:
+            - POSTGRES_DB=${DATABASE_DB}
+            - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+            - POSTGRES_USER=${DATABASE_USER}
+        ports:
+            - ${DATABASE_PORT}:5432
+        volumes:
+            - ./data/database-data:/var/lib/postgresql/data:rw
+        networks:
+            - backend
+
+    mailer:
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-mailer:${MAILER_IMAGE_TAG}
+        platform: linux/x86_64
+        working_dir: /var/www/html
+        ports:
+            - ${MAILER_PORT_1}:1025
+            - ${MAILER_PORT_2}:1080
+        networks:
+            - backend
+
+volumes:
+    app_data:
+
+networks:
+    backend:

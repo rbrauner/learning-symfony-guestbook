@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+    php:
+        build:
+            context: ./docker/build/php
+            args:
+                - PHP_VERSION=${PHP_IMAGE_VERSION}
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-php:${PHP_IMAGE_TAG}
+        platform: linux/x86_64
+        depends_on:
+            - database
+            - mailer
+
+    nginx:
+        build:
+            context: ./docker/build/nginx
+            args:
+                - NGINX_VERSION=${NGINX_IMAGE_VERSION}
+                - PHP_UPSTREAM_CONTAINER=php
+                - PHP_UPSTREAM_PORT=${PHP_PORT}
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-nginx:${NIGNX_IMAGE_TAG}
+        platform: linux/x86_64
+        depends_on:
+            - php
+
+    database:
+        build:
+            context: ./docker/build/database
+            args:
+                - POSTGRES_VERSION=${DATABASE_IMAGE_VERSION}
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-database:${DATABASE_IMAGE_TAG}
+        platform: linux/x86_64
+        environment:
+            - POSTGRES_DB=${DATABASE_DB}
+            - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+            - POSTGRES_USER=${DATABASE_USER}
+
+    mailer:
+        build:
+            context: ./docker/build/mailer
+            args:
+                - MAILER_VERSION=${MAILER_IMAGE_VERSION}
+        image: ghcr.io/rbrauner/learning-symfony-guestbook-mailer:${MAILER_IMAGE_TAG}
+        platform: linux/x86_64
