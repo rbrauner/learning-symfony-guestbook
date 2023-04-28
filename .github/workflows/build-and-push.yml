@@ -15,11 +15,16 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
-            - name: Test
+            - name: Set docker image env var
               run: |
-                echo $PHP_IMAGE_VERSION
-                echo ${{ env.PHP_IMAGE_VERSIONN }}
-                echo ${{ secrets.PHP_IMAGE_VERSIONN }}
+                echo "PHP_IMAGE_VERSION=${PHP_IMAGE_VERSION}" >> $GITHUB_ENV
+            - run: |
+                echo ${{ env.PHP_IMAGE_VERSION }}
+            # - name: Test
+            #   run: |
+            #     echo $PHP_IMAGE_VERSION
+            #     echo ${{ env.PHP_IMAGE_VERSIONN }}
+            #     echo ${{ secrets.PHP_IMAGE_VERSIONN }}
     # php-image:
     #     name: Build and push php image
     #     runs-on: ubuntu-latest
