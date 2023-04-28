@@ -39,7 +39,6 @@ jobs:
               uses: docker/metadata-action@v4
               with:
                 images: |
-                  rbrauner/learning-symfony-guestbook-php
                   ghcr.io/rbrauner/learning-symfony-guestbook-php
                 tags: |
                   type=schedule
@@ -103,7 +102,6 @@ jobs:
               uses: docker/metadata-action@v4
               with:
                 images: |
-                  rbrauner/learning-symfony-guestbook-nginx
                   ghcr.io/rbrauner/learning-symfony-guestbook-nginx
                 tags: |
                   type=schedule
@@ -136,7 +134,7 @@ jobs:
                   build-args:
                     NGINX_VERSION=${{ env.NGINX_IMAGE_VERSION }}
                     PHP_UPSTREAM_CONTAINER=php
-                    PHP_UPSTREAM_PORT=${{ env.PHP_UPSTREAM_PORT }}
+                    PHP_UPSTREAM_PORT=${{ env.PHP_PORT }}
 
     database-image:
         name: Build and push database image
@@ -168,7 +166,6 @@ jobs:
               uses: docker/metadata-action@v4
               with:
                 images: |
-                  rbrauner/learning-symfony-guestbook-database
                   ghcr.io/rbrauner/learning-symfony-guestbook-database
                 tags: |
                   type=schedule
@@ -231,7 +228,6 @@ jobs:
               uses: docker/metadata-action@v4
               with:
                 images: |
-                  rbrauner/learning-symfony-guestbook-mailer
                   ghcr.io/rbrauner/learning-symfony-guestbook-mailer
                 tags: |
                   type=schedule
