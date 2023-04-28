@@ -44,6 +44,22 @@ jobs:
             #     echo $RELEASE_VERSION
             #     echo ${{ env.RELEASE_VERSION }}
 
+            - name: Docker meta
+              id: meta
+              uses: docker/metadata-action@v4
+              with:
+                images: |
+                  rbrauner/learning-symfony-guestbook-php
+                  ghcr.io/rbrauner/learning-symfony-guestbook-php
+                tags: |
+                  type=schedule
+                  type=ref,event=branch
+                  type=ref,event=pr
+                  type=semver,pattern={{version}}
+                  type=semver,pattern={{major}}.{{minor}}
+                  type=semver,pattern={{major}}
+                  type=sha
+
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
 
@@ -59,9 +75,8 @@ jobs:
               with:
                   context: ./docker/prod/php
                   push: true
-                  tags:
-                    ghcr.io/rbrauner/learning-symfony-guestbook-php:latest
-                    ghcr.io/rbrauner/learning-symfony-guestbook-php:${{ env.RELEASE_VERSION }}
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
                   build-args:
