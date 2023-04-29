@@ -294,6 +294,6 @@ jobs:
                 script: |
                   cd ${{ secrets.REMOTE_PATH }}
                   sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=${{ env.DOCKER_IMAGE_TAG }}/g" .env
-                  docker-compose -f ./docker-compose.prod.yml down
+                  docker-compose -f ./docker-compose.prod.yml down -v
                   docker-compose -f ./docker-compose.prod.yml pull
                   docker-compose -f ./docker-compose.prod.yml up -d
