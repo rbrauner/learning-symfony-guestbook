@@ -275,7 +275,7 @@ jobs:
                 username: ${{ secrets.USERNAME }}
                 key: ${{ secrets.KEY }}
                 source: "docker-compose.prod.yml"
-                target: "${{ secrets.REMOTE_PATH }}/docker-compose.prod.yml"
+                target: "${{ secrets.REMOTE_PATH }}"
             - name: Docker compose pull and up
               uses: appleboy/ssh-action@v0.1.10
               with:
