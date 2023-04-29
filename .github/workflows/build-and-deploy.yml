@@ -276,7 +276,7 @@ jobs:
             #     echo ${{ env.RELEASE_VERSION }}
 
             - name: Set env
-              run: echo "TAG=${${GITHUB_REF#refs/*/}//v}" >> $GITHUB_ENV
+              run: echo "TAG=${GITHUB_REF#refs/*///v}" >> $GITHUB_ENV
 
             - name: Upload docker-compose.prod.yml
               uses: appleboy/scp-action@v0.1.4
