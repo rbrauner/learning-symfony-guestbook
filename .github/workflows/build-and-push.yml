@@ -68,7 +68,7 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
-                  build-args:
+                  build-args: |
                     PHP_VERSION=${{ env.PHP_IMAGE_VERSION }}
 
     nginx-image:
@@ -131,7 +131,7 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
-                  build-args:
+                  build-args: |
                     NGINX_VERSION=${{ env.NGINX_IMAGE_VERSION }}
                     PHP_UPSTREAM_CONTAINER=php
                     PHP_UPSTREAM_PORT=${{ env.PHP_PORT }}
@@ -195,7 +195,7 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
-                  build-args:
+                  build-args: |
                     POSTGRES_VERSION=${{ env.DATABASE_IMAGE_VERSION }}
 
     mailer-image:
@@ -257,5 +257,5 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
-                  build-args:
+                  build-args: |
                     MAILER_VERSION=${{ env.MAILER_IMAGE_VERSION }}
