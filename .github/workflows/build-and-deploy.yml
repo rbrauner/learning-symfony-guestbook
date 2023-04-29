@@ -270,7 +270,7 @@ jobs:
 
             - name: Set env
               run: |
-                echo "TAG=$(echo ${GITHUB_REF#refs/*/} | sed 's/v//g')" >> $GITHUB_ENV
+                echo "DOCKER_IMAGE_TAG=$(echo ${GITHUB_REF#refs/*/} | sed 's/v//g')" >> $GITHUB_ENV
 
             - name: Upload docker-compose.prod.yml
               uses: appleboy/scp-action@v0.1.4
@@ -291,7 +291,7 @@ jobs:
                 key: ${{ secrets.KEY }}
                 script: |
                   cd ${{ secrets.REMOTE_PATH }}
-                  sed -i "s/^TAG=.*/TAG=${{ env.TAG }}/g" .env
+                  sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=${{ env.DOCKER_IMAGE_TAG }}/g" .env
                   docker-compose -f ./docker-compose.prod.yml down
                   docker-compose -f ./docker-compose.prod.yml pull
                   docker-compose -f ./docker-compose.prod.yml up -d
