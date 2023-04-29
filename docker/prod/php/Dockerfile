@@ -42,3 +42,13 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' 
 
 # copy config
 COPY ./php.ini /usr/local/etc/php/php.ini
+
+# Custom cache invalidation
+ARG CACHEBUST=1
+
+# initialize project
+RUN git clone https://github.com/rbrauner/learning-symfony-guestbook.git .
+RUN mkdir -p data/database-data var
+RUN chmod 777 var
+RUN echo "APP_ENV=prod" > .env.local
+RUN symfony composer install

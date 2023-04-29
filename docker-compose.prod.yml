@@ -1,28 +1,19 @@
 version: "3"
 
 services:
-    app:
-        image: ghcr.io/rbrauner/learning-symfony-guestbook-app:${APP_IMAGE_TAG}
-        platform: linux/x86_64
-        working_dir: /var/www/html
-        depends_on:
-            - php
-            - nginx
-            - database
-            - mailer
-        volumes:
-            - app_data:/var/www/html/:ro
-            - ./data:/var/www/html/data/:rw
-            - ./var:/var/www/html/var/:rw
-        networks:
-            - backend
-
     php:
         image: ghcr.io/rbrauner/learning-symfony-guestbook-php:${PHP_IMAGE_TAG}
         platform: linux/x86_64
         working_dir: /var/www/html
         ports:
             - ${PHP_PORT}:9000
+        depends_on:
+            - database
+            - mailer
+        volumes:
+            - app_data:/var/www/html/:ro
+            - ./data:/var/www/html/data/:rw
+            - ./var:/var/www/html/var/:rw
         networks:
             - backend
 
