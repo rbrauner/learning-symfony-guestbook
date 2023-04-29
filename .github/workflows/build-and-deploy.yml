@@ -271,18 +271,18 @@ jobs:
               uses: appleboy/scp-action@v0.1.4
               with:
                 host: ${{ secrets.HOST }}
-                username: ${{ secrets.USERNAME }}
-                password: ${{ secrets.PASSWORD }}
                 port: ${{ secrets.PORT }}
+                username: ${{ secrets.USERNAME }}
+                key: ${{ secrets.KEY }}
                 source: "docker-compose.prod.yml"
                 target: "${{ secrets.REMOTE_PATH }}/docker-compose.prod.yml"
             - name: Docker compose pull and up
               uses: appleboy/ssh-action@v0.1.10
               with:
                 host: ${{ secrets.HOST }}
-                username: ${{ secrets.USERNAME }}
-                password: ${{ secrets.PASSWORD }}
                 port: ${{ secrets.PORT }}
+                username: ${{ secrets.USERNAME }}
+                key: ${{ secrets.KEY }}
                 script: |
                   cd ${{ secrets.REMOTE_PATH }}
                   docker-compose -f ./docker-compose.prod.yml down
