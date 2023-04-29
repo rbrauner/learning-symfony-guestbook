@@ -276,7 +276,7 @@ jobs:
             #     echo ${{ env.RELEASE_VERSION }}
 
             - name: Set env
-              run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+              run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
             - name: Upload docker-compose.prod.yml
               uses: appleboy/scp-action@v0.1.4
@@ -297,7 +297,7 @@ jobs:
                 key: ${{ secrets.KEY }}
                 script: |
                   cd ${{ secrets.REMOTE_PATH }}
-                  sed -i "s/^TAG=.*/TAG=${{ env.RELEASE_VERSION }}/g" .env
+                  sed -i "s/^TAG=.*/TAG=${{ env.TAG//v }}/g" .env
                 #   docker-compose -f ./docker-compose.prod.yml down
                 #   docker-compose -f ./docker-compose.prod.yml pull
                 #   docker-compose -f ./docker-compose.prod.yml up -d
