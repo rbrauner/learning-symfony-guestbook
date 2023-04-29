@@ -1,5 +1,5 @@
-ARG PHP_VERSION
-FROM php:${PHP_VERSION}
+ARG PHP_IMAGE_VERSION
+FROM php:${PHP_IMAGE_VERSION}
 
 LABEL org.opencontainers.image.source https://github.com/rbrauner/learning-symfony-guestbook
 LABEL org.opencontainers.image.description="Learning - Symfony guestbook - PHP image"
@@ -42,9 +42,3 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' 
 
 # copy config
 COPY ./php.ini /usr/local/etc/php/php.ini
-
-# initialize project
-RUN git clone https://github.com/rbrauner/learning-symfony-guestbook.git .
-RUN mkdir -p data var var/database-data
-RUN echo "APP_ENV=prod" > .env.local
-RUN symfony composer install

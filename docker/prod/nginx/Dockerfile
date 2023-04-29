@@ -1,5 +1,5 @@
-ARG NGINX_VERSION
-FROM nginx:${NGINX_VERSION}
+ARG NGINX_IMAGE_VERSION
+FROM nginx:${NGINX_IMAGE_VERSION}
 
 LABEL org.opencontainers.image.source https://github.com/rbrauner/learning-symfony-guestbook
 LABEL org.opencontainers.image.description="Learning - Symfony guestbook - Nginx image"

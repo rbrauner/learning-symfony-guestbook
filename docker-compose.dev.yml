@@ -1,22 +1,35 @@
 version: "3"
 
 services:
-    php:
+    app:
         build:
-            context: ./docker/dev/php
+            context: ./docker/dev/app
             args:
-                - PHP_VERSION=${PHP_IMAGE_VERSION}
+                - APP_IMAGE_VERSION=${APP_IMAGE_VERSION}
         platform: linux/x86_64
         working_dir: /var/www/html
-        ports:
-            - ${PHP_PORT}:9000
         depends_on:
+            - php
+            - nginx
             - database
             - mailer
         volumes:
             - .:/var/www/html/:ro
             - ./data:/var/www/html/data/:rw
             - ./var:/var/www/html/var/:rw
+        networks:
+            - backend
+
+    php:
+        build:
+            context: ./docker/dev/php
+            args:
+                - PHP_IMAGE_VERSION=${PHP_IMAGE_VERSION}
+        platform: linux/x86_64
+        working_dir: /var/www/html
+        ports:
+            - ${PHP_PORT}:9000
+        volumes:
             - ./docker/dev/php/php.ini:/usr/local/etc/php/php.ini:ro
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
@@ -27,7 +40,7 @@ services:
         build:
             context: ./docker/dev/nginx
             args:
-                - NGINX_VERSION=${NGINX_IMAGE_VERSION}
+                - NGINX_IMAGE_VERSION=${NGINX_IMAGE_VERSION}
                 - PHP_UPSTREAM_CONTAINER=php
                 - PHP_UPSTREAM_PORT=${PHP_PORT}
         platform: linux/x86_64
@@ -51,7 +64,7 @@ services:
         build:
             context: ./docker/dev/database
             args:
-                - POSTGRES_VERSION=${DATABASE_IMAGE_VERSION}
+                - DATABASE_IMAGE_VERSION=${DATABASE_IMAGE_VERSION}
         platform: linux/x86_64
         working_dir: /var/www/html
         environment:
@@ -69,7 +82,7 @@ services:
         build:
             context: ./docker/dev/mailer
             args:
-                - MAILER_VERSION=${MAILER_IMAGE_VERSION}
+                - MAILER_IMAGE_VERSION=${MAILER_IMAGE_VERSION}
         platform: linux/x86_64
         working_dir: /var/www/html
         ports:
