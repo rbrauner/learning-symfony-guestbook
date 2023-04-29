@@ -1,12 +1,9 @@
 # learning-symfony-guestbook
 
+## Learning materials
+
+- [Symfony: The Fast Track](https://symfony.com/book)
+
 ## Development run
 
 `docker compose -f ./docker-compose.dev.yml up --build -d`
-
-## Production deploy
-
-Copy `.env` and `docker-compose.prod.yml` to production, adjust `.env` and run:
-
-- `docker compose -f ./docker-compose.prod.yml pull`
-- `docker compose -f ./docker-compose.prod.yml up -d`
