@@ -12,6 +12,8 @@ services:
             - mailer
         volumes:
             - app_data:/var/www/html/:ro
+            - .env:/var/www/html/.env:ro
+            - .env.local:/var/www/html/.env.local:ro
             - ./data:/var/www/html/data/:rw
             - ./var:/var/www/html/var/:rw
         networks:

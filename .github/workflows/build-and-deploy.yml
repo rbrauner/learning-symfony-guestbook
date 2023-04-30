@@ -293,7 +293,9 @@ jobs:
                 key: ${{ secrets.KEY }}
                 script: |
                   cd ${{ secrets.REMOTE_PATH }}
-                  sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=${{ env.DOCKER_IMAGE_TAG }}/g" .env
+                  touch .env.local
+                  grep -q "DOCKER_IMAGE_TAG=" .env.local; [ $? -eq 1 ] && echo "DOCKER_IMAGE_TAG=${{ env.DOCKER_IMAGE_TAG }}" >> .env.local
+                  sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=${{ env.DOCKER_IMAGE_TAG }}/g" .env.local
                   docker-compose -f ./docker-compose.prod.yml down -v
                   docker-compose -f ./docker-compose.prod.yml pull
                   docker-compose -f ./docker-compose.prod.yml up -d
